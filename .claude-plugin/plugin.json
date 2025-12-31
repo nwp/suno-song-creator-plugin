@@ -3,7 +3,7 @@
   "description": "Comprehensive Suno AI music prompt creation with structured metadata, genre analysis, vocal personas, lyric writing, copyright-safe style descriptions, and organized file export",
   "version": "0.6.0",
   "author": {
-    "name": "Nathan"
+    "name": "Nathan Phelps"
   },
   "homepage": "https://github.com/nwp/suno-song-creator-plugin",
   "repository": {
