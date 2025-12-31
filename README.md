@@ -7,7 +7,7 @@ A comprehensive Claude Code skill for creating professional, production-ready mu
 Suno Song Creator guides you through the entire music prompt creation workflow:
 - Interactive questioning to understand your vision
 - Web research of artist styles and song structures
-- Structured prompt building with proper formatting
+- Structured prompt building within 1000 character limit
 - Model and parameter selection based on genre
 - Professional lyric writing with meta tags
 - Copyright-safe style descriptions (no artist/album/song names)
@@ -20,7 +20,7 @@ Suno Song Creator guides you through the entire music prompt creation workflow:
 
 1. **Understand the Vision** - Interactive questioning and artist research
 2. **Select Model & Parameters** - Choose optimal Suno model (v4, v4.5, v4.5+, v5)
-3. **Build Structured Prompt** - Genre, vocal, instrumentation, production, mood
+3. **Build Structured Prompt** - Genre, vocal, instrumentation, production, mood (within 1000 char limit)
 4. **Configure Advanced Parameters** - MAX Mode, weirdness, style influence, exclusions
 5. **Write Effective Lyrics** - Meta tags, syllable control, AI-slop avoidance
 6. **Apply Realism & Genre Techniques** - Genre-specific strategies
@@ -242,6 +242,7 @@ Contributions are welcome! Please:
 
 ## Version History
 
+- **0.6.0** - Added 1000 character limit guidance with optimization strategies
 - **0.5.0** - Added copyright-safe style descriptions
 - **0.4.0** - Added AI-slop avoidance guidance
 - **0.3.0** - Added automatic file export

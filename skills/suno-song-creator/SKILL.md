@@ -1,7 +1,7 @@
 ---
 name: Suno Song Creator
-description: This skill should be used when the user asks to "create a Suno prompt", "write a Suno song", "generate music with Suno", "help me with Suno", "make a song prompt", "create lyrics for Suno", "build a music prompt", or mentions Suno AI music generation. Provides comprehensive guidance for creating professional Suno prompts using advanced prompting strategies, structured formatting, parameter optimization, genre-specific techniques, interactive questioning, artist/song research, automatic file export to organized project directories, AI-slop avoidance for authentic human-centered lyrics, and copyright-safe style descriptions that avoid artist/album/song names.
-version: 0.5.0
+description: This skill should be used when the user asks to "create a Suno prompt", "write a Suno song", "generate music with Suno", "help me with Suno", "make a song prompt", "create lyrics for Suno", "build a music prompt", or mentions Suno AI music generation. Provides comprehensive guidance for creating professional Suno prompts using advanced prompting strategies, structured formatting within 1000 character limit, parameter optimization, genre-specific techniques, interactive questioning, artist/song research, automatic file export to organized project directories, AI-slop avoidance for authentic human-centered lyrics, and copyright-safe style descriptions that avoid artist/album/song names.
+version: 0.6.0
 ---
 
 # Suno Song Creator
@@ -222,15 +222,68 @@ Choose the model based on genre and quality needs (use AskUserQuestion if user i
 Use the **colon-and-quotes format** for maximum clarity:
 
 ```
-genre: "indie folk rock, 2020s bedroom pop, Phoebe Bridgers x Big Thief vibe"
+genre: "indie folk rock, 2020s bedroom pop aesthetic, intimate singer-songwriter confessional style, melancholic acoustic with modern indie production"
 
-vocal: "soft female alto, intimate whisper-to-belt, gentle vibrato, slight nasal quality"
+vocal: "soft female alto, intimate whisper-to-belt delivery, gentle vibrato, slight nasal quality, breathy phrasing, emotional vulnerability"
 
-instrumentation: "fingerpicked acoustic guitar, warm upright bass, sparse piano, light ambient pads"
+instrumentation: "fingerpicked acoustic guitar with steel strings, warm upright bass providing foundation, sparse piano adding atmosphere, light ambient pads"
 
-production: "lo-fi intimacy, tape warmth, close-miked vocals, narrow stereo image, natural room reverb"
+production: "lo-fi intimacy, tape warmth and saturation, close-miked vocals with breath detail, narrow stereo image, natural room reverb, unpolished authentic feel"
 
-mood: "melancholic, nostalgic, late-night introspection"
+mood: "melancholic, nostalgic, late-night introspection, vulnerable, bittersweet longing"
+```
+
+**🚨 CRITICAL: 1000 Character Limit**
+
+**Suno prompts have a STRICT 1000 character maximum (excluding lyrics and meta tags)**
+
+The structured prompt (genre, vocal, instrumentation, production, mood sections combined) MUST NOT exceed 1000 characters total.
+
+**Character budget guidelines:**
+- **Genre:** ~150-200 characters
+- **Vocal:** ~150-200 characters
+- **Instrumentation:** ~200-250 characters
+- **Production:** ~200-250 characters
+- **Mood:** ~100-150 characters
+- **Total:** ~800-1000 characters (stay under 1000!)
+
+**How to stay within limit:**
+
+✅ **Be concise and specific:**
+```
+❌ TOO LONG (45 chars): "electric guitar with heavy distortion and power chords"
+✅ BETTER (28 chars): "distorted power chord riffs"
+```
+
+✅ **Use "and" not commas for essential elements:**
+```
+❌ WASTES CHARS: "acoustic guitar, male vocals, emotional delivery, reverb"
+✅ EFFICIENT: "acoustic guitar with male vocals and emotional delivery and reverb"
+```
+
+✅ **Prioritize impactful descriptors:**
+- Drop redundant words ("very", "really", "extremely")
+- Combine related ideas ("warm analog tape saturation" not "warm sound and analog character and tape saturation")
+- Cut low-impact adjectives if over limit
+
+✅ **Check character count before finalizing:**
+Count characters in the complete prompt (all sections concatenated). If over 1000, trim systematically:
+1. Remove least essential mood descriptors first
+2. Condense production details next
+3. Streamline instrumentation last
+4. Keep genre and vocal focused but brief
+
+**Example within limit (982 characters):**
+```
+genre: "indie folk rock, 2020s bedroom pop aesthetic, intimate singer-songwriter confessional style, melancholic acoustic with modern indie production"
+
+vocal: "soft female alto, intimate whisper-to-belt delivery, gentle vibrato, slight nasal quality, breathy phrasing, emotional vulnerability, natural vibrato on held notes"
+
+instrumentation: "fingerpicked acoustic guitar with steel strings and natural resonance, warm upright bass providing subtle foundation, sparse piano adding atmospheric texture, light ambient pads in background, minimal percussion with brushed snare"
+
+production: "lo-fi intimacy, tape warmth and saturation, close-miked vocals with breath detail, narrow stereo image, natural room reverb with short decay, early reflections emphasized, dry mix without artificial widening, raw performance texture, unpolished and authentic"
+
+mood: "melancholic, nostalgic, late-night introspection, vulnerable, bittersweet longing, quiet sadness, intimate confession"
 ```
 
 **⚠️ Copyright and Content Restrictions**
