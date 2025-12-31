@@ -260,7 +260,7 @@ Based on ["The Complete Guide to Mastering Suno: Advanced Strategies for Profess
 ## Support
 
 For issues, questions, or suggestions:
-- Open an issue on [GitHub](https://github.com/YOUR-USERNAME/suno-song-creator-plugin/issues)
+- Open an issue on [GitHub](https://github.com/nwp/suno-song-creator-plugin/issues)
 - Contributions and feedback welcome!
 
 ## Related Resources
