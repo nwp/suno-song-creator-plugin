@@ -17,19 +17,18 @@ This example demonstrates professional prompting for electronic, EDM, and synthw
 
 ## Prompt Style (Structured Format)
 
+**Character count: 993 characters** ✓
+
 ```
-genre: "dark synthwave EDM with cyberpunk aesthetic, 1980s influenced electronic with modern production, darksynth intensity and aggressive energy, driving bassline, intense build-and-drop structure"
-
-vocal: "male baritone with autotune processing, modern electronic vocal treatment, robotic character, vocode effect on chorus, sparse vocal presence with focus on instrumental drops"
-
-instrumentation: "FM synthesis bass with evolving modulation and dynamic harmonic motion, wavetable lead synth with LFO-driven movement, analog-style pads with slow attack and rich texture, arpeggiated sequences with rhythmic precision, electronic drums with punchy kick and crisp hi-hats, TR-808 sub bass with sidechain compression, no acoustic elements"
-
-production: "wall of sound construction with dense layering, sidechain compression creating rhythmic pumping, wide stereo image with separated elements, low-pass filter sweeps during builds, reverb with controlled decay, delay with ping-pong stereo, modern mastering with high fidelity and punchy dynamics, professional EDM polish"
-
-synthesis: "FM and wavetable bass design with non-sawtooth character, rounded harmonic profile avoiding generic saw waves, evolving modulation patterns that change over time, LFO-driven movement creating rhythmic interest, dynamic harmonic motion with spectral morphing, resonant bandpass filters with frequency sweeps, phase-coherent low end, controlled high harmonics, smooth top end without harsh brightness, clean punch on transients"
-
-mood: "dark and mysterious atmosphere, intense energy building to explosive drops, futuristic and cyberpunk aesthetic, nocturnal urban vibe, aggressive yet controlled, epic and cinematic moments"
+genre: "dark synthwave EDM, cyberpunk aesthetic, 1980s electronic with modern production, darksynth intensity, driving bassline, build-drop structure"
+vocal: "male baritone, autotune processing, electronic vocal treatment, robotic character, vocode on chorus, sparse vocal, instrumental focus"
+instrumentation: "FM synthesis bass with evolving modulation, wavetable lead with LFO movement, analog pads with slow attack, arpeggiated sequences, electronic drums, punchy kick, crisp hi-hats, TR-808 sub bass, sidechain compression, no acoustic elements"
+production: "wall of sound, dense layering, sidechain compression, wide stereo, low-pass filter sweeps, controlled reverb decay, ping-pong delay, modern mastering, punchy dynamics, professional EDM polish"
+synthesis: "FM and wavetable bass design, non-sawtooth character, rounded harmonic profile, evolving modulation, LFO-driven movement, dynamic harmonic motion, spectral morphing, resonant bandpass filters, phase-coherent low end, controlled high harmonics, smooth top end, clean transients"
+mood: "dark, mysterious atmosphere, intense energy, explosive drops, futuristic cyberpunk, nocturnal urban, aggressive yet controlled, epic, cinematic"
 ```
+
+**Note:** NO blank lines between sections! Copy exactly as shown above.
 
 ## Lyrics with Meta Tags
 

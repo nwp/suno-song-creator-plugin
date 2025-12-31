@@ -1,12 +1,32 @@
 ---
 name: Suno Song Creator
-description: This skill should be used when the user asks to "create a Suno prompt", "write a Suno song", "generate music with Suno", "help me with Suno", "make a song prompt", "create lyrics for Suno", "build a music prompt", or mentions Suno AI music generation. Provides comprehensive guidance for creating professional Suno prompts using advanced prompting strategies, structured formatting within 1000 character limit, parameter optimization, genre-specific techniques, interactive questioning, artist/song research, automatic file export to organized project directories, AI-slop avoidance for authentic human-centered lyrics, and copyright-safe style descriptions that avoid artist/album/song names.
-version: 0.6.0
+description: This skill should be used when the user asks to "create a Suno prompt", "write a Suno song", "generate music with Suno", "help me with Suno", "make a song prompt", "create lyrics for Suno", "build a music prompt", or mentions Suno AI music generation. Provides comprehensive guidance for creating professional Suno prompts using advanced prompting strategies, structured formatting within 1000 character limit (NO blank lines between sections), parameter optimization, genre-specific techniques, interactive questioning with efficient project name collection, artist/song research, automatic file export to organized project directories, AI-slop avoidance for authentic human-centered lyrics, copyright-safe style descriptions that avoid artist/album/song names, and character counting utilities for accurate verification.
+version: 0.9.0
 ---
 
 # Suno Song Creator
 
 Create professional, production-ready music prompts for Suno AI by understanding its probabilistic nature and speaking its native language of structured metadata.
+
+## 🛠️ Character Counting Utilities
+
+**IMPORTANT:** This skill includes character counting utilities in `utils/` because LLMs cannot accurately count characters.
+
+**Tool Requirements:**
+- Uses the **Bash tool** to run character counting scripts
+- Requires either Python 3 or Node.js installed on the system
+
+**Available Utilities:**
+- `utils/count-prompt.py` (Python version)
+- `utils/count-prompt.js` (Node.js version)
+
+**Usage in Workflow:**
+During Step 8 (Verify), use the Bash tool to execute the counting utility:
+```bash
+python count-prompt.py 'your-prompt-text-here'
+```
+
+See `utils/README.md` for detailed usage instructions.
 
 ## Core Concept
 
@@ -222,22 +242,20 @@ Choose the model based on genre and quality needs (use AskUserQuestion if user i
 Use the **colon-and-quotes format** for maximum clarity:
 
 ```
-genre: "indie folk rock, 2020s bedroom pop aesthetic, intimate singer-songwriter confessional style, melancholic acoustic with modern indie production"
-
-vocal: "soft female alto, intimate whisper-to-belt delivery, gentle vibrato, slight nasal quality, breathy phrasing, emotional vulnerability"
-
-instrumentation: "fingerpicked acoustic guitar with steel strings, warm upright bass providing foundation, sparse piano adding atmosphere, light ambient pads"
-
-production: "lo-fi intimacy, tape warmth and saturation, close-miked vocals with breath detail, narrow stereo image, natural room reverb, unpolished authentic feel"
-
-mood: "melancholic, nostalgic, late-night introspection, vulnerable, bittersweet longing"
+genre: "indie folk rock, 2020s bedroom pop aesthetic, confessional singer-songwriter style"
+vocal: "soft female alto, intimate whisper-to-belt, gentle vibrato, slight nasal quality"
+instrumentation: "fingerpicked acoustic guitar, warm upright bass, sparse piano, light ambient pads"
+production: "lo-fi intimacy, tape warmth, close-miked vocals, narrow stereo, natural room reverb"
+mood: "melancholic, nostalgic, late-night introspection"
 ```
 
 **🚨 CRITICAL: 1000 Character Limit**
 
-**Suno prompts have a STRICT 1000 character maximum (excluding lyrics and meta tags)**
+**Suno prompts have a STRICT 1000 character maximum INCLUDING all spaces, quotes, and punctuation (excluding lyrics and meta tags)**
 
-The structured prompt (genre, vocal, instrumentation, production, mood sections combined) MUST NOT exceed 1000 characters total.
+**CRITICAL FORMATTING RULE: NO BLANK LINES between sections!** The sections must be concatenated together with only line breaks, no empty lines.
+
+The structured prompt (genre, vocal, instrumentation, production, mood sections combined) MUST NOT exceed 1000 characters total when counted exactly.
 
 **Character budget guidelines:**
 - **Genre:** ~150-200 characters
@@ -249,16 +267,32 @@ The structured prompt (genre, vocal, instrumentation, production, mood sections 
 
 **How to stay within limit:**
 
+✅ **NO BLANK LINES - Most critical rule:**
+```
+❌ WRONG (adds extra characters):
+genre: "dream pop"
+
+vocal: "soft female"
+
+❌ This format wastes characters on blank lines!
+
+✅ CORRECT (compact):
+genre: "dream pop"
+vocal: "soft female"
+
+✅ No blank lines between sections!
+```
+
 ✅ **Be concise and specific:**
 ```
 ❌ TOO LONG (45 chars): "electric guitar with heavy distortion and power chords"
 ✅ BETTER (28 chars): "distorted power chord riffs"
 ```
 
-✅ **Use "and" not commas for essential elements:**
+✅ **Use commas for lists, not "and":**
 ```
-❌ WASTES CHARS: "acoustic guitar, male vocals, emotional delivery, reverb"
-✅ EFFICIENT: "acoustic guitar with male vocals and emotional delivery and reverb"
+❌ WASTES CHARS (58 chars): "acoustic guitar with male vocals and emotional delivery and reverb"
+✅ EFFICIENT (50 chars): "acoustic guitar, male vocals, emotional, reverb"
 ```
 
 ✅ **Prioritize impactful descriptors:**
@@ -266,25 +300,23 @@ The structured prompt (genre, vocal, instrumentation, production, mood sections 
 - Combine related ideas ("warm analog tape saturation" not "warm sound and analog character and tape saturation")
 - Cut low-impact adjectives if over limit
 
-✅ **Check character count before finalizing:**
-Count characters in the complete prompt (all sections concatenated). If over 1000, trim systematically:
+✅ **ALWAYS verify character count before finalizing:**
+Count characters in the complete prompt (all 5 sections with NO blank lines between them). If over 1000, trim systematically:
 1. Remove least essential mood descriptors first
 2. Condense production details next
 3. Streamline instrumentation last
 4. Keep genre and vocal focused but brief
 
-**Example within limit (982 characters):**
+**Example within limit (746 characters - VERIFIED):**
 ```
-genre: "indie folk rock, 2020s bedroom pop aesthetic, intimate singer-songwriter confessional style, melancholic acoustic with modern indie production"
-
-vocal: "soft female alto, intimate whisper-to-belt delivery, gentle vibrato, slight nasal quality, breathy phrasing, emotional vulnerability, natural vibrato on held notes"
-
-instrumentation: "fingerpicked acoustic guitar with steel strings and natural resonance, warm upright bass providing subtle foundation, sparse piano adding atmospheric texture, light ambient pads in background, minimal percussion with brushed snare"
-
-production: "lo-fi intimacy, tape warmth and saturation, close-miked vocals with breath detail, narrow stereo image, natural room reverb with short decay, early reflections emphasized, dry mix without artificial widening, raw performance texture, unpolished and authentic"
-
-mood: "melancholic, nostalgic, late-night introspection, vulnerable, bittersweet longing, quiet sadness, intimate confession"
+genre: "dream pop, 2020s bedroom pop, ethereal soundscapes with lush synth textures and ambient pads, modern indie pop sensibilities"
+vocal: "soft female soprano, breathy delivery, whisper-to-belt range, airy phrasing, gentle vibrato on held notes, close-miked intimacy"
+instrumentation: "layered synth pads with slow attack, arpeggiated patterns, subtle warm bass, soft electronic percussion, minimal kick"
+production: "wide stereo image, spacious reverb with long decay, atmospheric processing, clean high-end, reverb-drenched vocals in mix"
+mood: "dreamy, floating, introspective, nostalgic, bittersweet, late-night contemplation, weightless, serene melancholy"
 ```
+
+**Note:** No blank lines between sections! Copy exactly as shown above.
 
 **⚠️ Copyright and Content Restrictions**
 
@@ -366,18 +398,20 @@ Avoid these in all prompt sections (genre, vocal, instrumentation, production, m
 
 **Critical formatting rules:**
 
-1. **Use periods, not commas to separate major ideas**
-   - ❌ Bad: `acoustic guitar, male vocals, emotional, reverb`
-   - ✅ Good: `acoustic guitar with male vocals and emotional delivery and reverb-heavy production.`
+1. **NO BLANK LINES between genre/vocal/instrumentation/production/mood sections**
+   - Each section on its own line, no empty lines between them
 
-2. **Use "and" and "with" to create run-on sentences**
-   - Commas signal optional elements; "and" signals essential elements
+2. **Use commas to save characters**
+   - ❌ Wastes chars: `acoustic guitar with male vocals and emotional delivery and reverb`
+   - ✅ Efficient: `acoustic guitar, male vocals, emotional delivery, reverb`
 
-3. **End each section with a period**
-   - Periods tell Suno one instruction is done and the next begins
+3. **No periods needed at end of sections**
+   - Line breaks separate sections naturally
+   - Periods waste characters without adding value
 
 4. **Keep descriptions metadata-like, not poetic**
    - Avoid lyrical rhythm in prompts (prevents lyric bleed)
+   - Use technical descriptors, not flowery language
 
 ### Step 4: Configure Advanced Parameters
 
@@ -597,6 +631,30 @@ Balance instrumentation with attitude:
 
 After creating the complete Suno prompt, save it to a structured location for future reference, iteration, and organization.
 
+**🚨 CRITICAL - Before saving, verify character count with the counting utility:**
+
+**Character Counting Utilities:**
+Located in `skills/suno-song-creator/utils/`:
+- `count-prompt.py` (Python version)
+- `count-prompt.js` (Node.js version)
+
+**Usage with Bash Tool:**
+```bash
+# Use Bash tool to run the counting utility with your prompt text:
+cd ${CLAUDE_PLUGIN_ROOT}/utils
+python count-prompt.py 'genre: "..."
+vocal: "..."
+mood: "..."'
+```
+
+**IMPORTANT:**
+1. **LLMs cannot accurately count characters** - MUST use Bash tool with counting utility to verify
+2. Count only includes structured prompt sections (genre, vocal, instrumentation, production, mood, etc.)
+3. Does NOT include lyrics, lyric meta tags, or MAX Mode parameters
+4. **Prompt has NO blank lines** between sections
+5. **Include verified character count** in saved file (e.g., "Character count: 746/1000 ✓ (Verified with count-prompt.py)")
+6. Use Bash tool to navigate to utils directory and run the script before finalizing prompt
+
 **When to save:**
 - Automatically after completing all workflow steps (Steps 1-6)
 - Saves complete prompt: configuration, structured prompt, lyrics, research notes
@@ -622,15 +680,49 @@ Scan conversation for project references using priority-based inference:
 
 **Priority 3 - Ask user:**
 
-If no project reference found, use AskUserQuestion:
+If no project reference found, use AskUserQuestion with proper "Other" handling:
+
+**IMPORTANT:** When asking about project name, structure the question so "Other" input collects the project name directly:
 
 ```
 Question: "What project or album is this song part of?"
-Header: "Project Organization"
+Header: "Project"
 Options:
-- "[Custom project name]" (User provides custom name via "Other")
-- "No specific project" (Will use "standalone-songs" as default)
-- "Same as previous: {last-project-name}" (Only show if applicable in session)
+- "Continue with '{existing-project-name}'" (Only if there's a recent project in session)
+- "Standalone song (no project)" (Will use "standalone-songs" as default)
+
+Note: The user will automatically have an "Other" option to specify a custom project name.
+When they select "Other", they'll provide the project name in the text field.
+```
+
+**How to handle the response:**
+- If user selects existing project option → use that project name
+- If user selects "Standalone song" → use "standalone-songs" as project folder
+- If user selects "Other" and provides text → use their custom project name directly
+
+**DO NOT ask a follow-up question** for the project name - the "Other" field collects it in one step.
+
+**Example Implementation:**
+
+```
+# First song in session - no existing project
+AskUserQuestion:
+  Question: "What project or album is this song part of?"
+  Header: "Project"
+  Options:
+    - "Standalone song (no project)"
+
+# User selects "Other" and types "Hunger Games Songs" → Use "Hunger Games Songs" directly
+
+# Second song in same session - has existing project
+AskUserQuestion:
+  Question: "What project or album is this song part of?"
+  Header: "Project"
+  Options:
+    - "Continue with 'Hunger Games Songs'"
+    - "Standalone song (no project)"
+
+# User can select existing project, standalone, or "Other" to specify new project name
 ```
 
 **2. Determine song title/identifier:**
@@ -871,11 +963,14 @@ After creating prompts with this skill, they are automatically saved to:
 1. **Understand** - Use AskUserQuestion to gather genre, mood, vocal, constraints; research artist references if provided
 2. **Research** - When artist/song mentioned, use web tools (Genius, HookTheory, Spotify) to analyze patterns and styles
 3. **Select** - Choose model (v5 for acoustic, v4.5 for heavy) and parameters; use AskUserQuestion for guidance
-4. **Build** - Structure prompt with colon-and-quotes format, incorporating research findings
+4. **Build** - Structure prompt with colon-and-quotes format, NO blank lines between sections, incorporating research findings
 5. **Configure** - Set vocal gender, exclusions, START_ON if needed
 6. **Write** - Create original lyrics informed by research patterns, with meta tags and proper structure
 7. **Apply** - Use genre-specific strategies (realism for acoustic, synthesis for electronic)
-8. **Save** - Export complete prompt to organized project directory structure for future reference and iteration
+8. **Verify** - Use `count-prompt.py` or `count-prompt.js` to verify character count (must be under 1000), ensure no blank lines
+9. **Save** - Export complete prompt with verified character count to organized project directory structure
+
+**🚨 CRITICAL:** Always use the character counting utilities in `utils/` before claiming a character count. LLMs cannot accurately count characters.
 
 ## Advanced Optimization
 

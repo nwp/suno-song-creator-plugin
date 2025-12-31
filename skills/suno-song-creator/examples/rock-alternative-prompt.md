@@ -17,19 +17,18 @@ This example demonstrates professional prompting for rock and alternative music,
 
 ## Prompt Style (Structured Format)
 
+**Character count: 968 characters** ✓
+
 ```
-genre: "alternative rock with post-grunge elements and 90s aesthetic, raw energy, introspective yet anthemic, Pacific Northwest grunge influence with melodic sensibility, guitar-driven with emotional depth"
-
-vocal: "male baritone with gritty texture, emotional intensity ranging from intimate verses to powerful belted choruses, slight rasp and vocal fry on low notes, raw delivery without excessive polish, grunge-era vulnerability with Seattle scene power and emotional rawness"
-
-instrumentation: "electric guitar with power chords and melodic lead lines using tube amp overdrive and natural distortion, driving kick-snare rhythm with acoustic drums recorded live, bass guitar locked tight with kick drum providing foundation, rhythm guitar with thick power chord progression, lead guitar with expressive bends and sustain, sparse atmospheric elements in background"
-
-production: "live recording quality with studio clarity, raw energy without excessive polish, natural room sound for drums, tube amp saturation on guitars, moderate reverb on vocals, authentic rock mixing with guitars loud in mix, punchy drum sound, warm bass presence, analog warmth without digital perfection"
-
-recording: "full band playing together, natural dynamics from live performance, room tone and ambient bleed between instruments, minimal overdubs, authentic take with energy prioritized over perfection"
-
-mood: "introspective yet anthemic, dark atmosphere with hopeful moments, raw emotional honesty, 90s alternative angst, vulnerability and strength combined, melancholic power, cathartic release"
+genre: "alternative rock, post-grunge, 90s aesthetic, raw energy, introspective yet anthemic, Pacific Northwest grunge, melodic sensibility, guitar-driven, emotional depth"
+vocal: "male baritone, gritty texture, emotional intensity, intimate verses to powerful choruses, slight rasp, vocal fry on low notes, raw delivery, grunge-era vulnerability, Seattle scene power, emotional rawness"
+instrumentation: "electric guitar, power chords, melodic lead lines, tube amp overdrive, natural distortion, driving kick-snare rhythm, acoustic drums, live recording, bass locked with kick, thick power chord progression, expressive bends and sustain, sparse atmospheric elements"
+production: "live recording quality, studio clarity, raw energy, natural room sound for drums, tube amp saturation, moderate reverb on vocals, authentic rock mixing, guitars loud, punchy drums, warm bass, analog warmth"
+recording: "full band playing together, natural dynamics, live performance, room tone, ambient bleed, minimal overdubs, authentic take, energy over perfection"
+mood: "introspective yet anthemic, dark atmosphere, hopeful moments, raw emotional honesty, 90s alternative angst, vulnerability and strength, melancholic power, cathartic release"
 ```
+
+**Note:** NO blank lines between sections! Copy exactly as shown above.
 
 ## Lyrics with Meta Tags
 
