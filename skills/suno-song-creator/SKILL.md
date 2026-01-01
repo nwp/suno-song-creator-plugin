@@ -1,7 +1,7 @@
 ---
 name: Suno Song Creator
-description: This skill should be used when the user asks to "create a Suno prompt", "write a Suno song", "generate music with Suno", "help me with Suno", "make a song prompt", "create lyrics for Suno", "build a music prompt", or mentions Suno AI music generation. Provides comprehensive guidance for creating professional Suno prompts using advanced prompting strategies, structured formatting within 1000 character limit (NO blank lines between sections), parameter optimization, genre-specific techniques, interactive questioning with efficient project name collection, artist/song research, automatic file export to organized project directories, AI-slop avoidance for authentic human-centered lyrics, copyright-safe style descriptions that avoid artist/album/song names, character counting utilities for accurate verification, and optional independent quality review via sub-agent for professional assessment.
-version: 1.0.0
+description: This skill should be used when the user asks to "create a Suno prompt", "write a Suno song", "generate music with Suno", "help me with Suno", "make a song prompt", "create lyrics for Suno", "build a music prompt", or mentions Suno AI music generation. Provides comprehensive guidance for creating professional Suno prompts using advanced prompting strategies, structured formatting within 1000 character limit (NO blank lines between sections), parameter optimization, genre-specific techniques, interactive questioning with efficient project name collection, automated artist/song research via sub-agent (web fetching + pattern extraction), automatic file export to organized project directories, AI-slop avoidance for authentic human-centered lyrics, copyright-safe style descriptions that avoid artist/album/song names, character counting utilities for accurate verification, and optional independent quality review via sub-agent for professional assessment.
+version: 1.1.0
 ---
 
 # Suno Song Creator
@@ -86,29 +86,68 @@ Options:
 - "Pop" (Polished, radio-ready hooks)
 ```
 
-### Artist and Song Research
+### Artist and Song Research (Automated)
 
-Research artist styles, song structures, and lyrical patterns using web tools before creating prompts:
+**IMPORTANT:** When user mentions artist reference, automatically launch song-researcher sub-agent for automated pattern analysis.
 
-**Research sources:**
-- **Genius.com** - Lyrical analysis, song structure, artist styles
-- **HookTheory.com** - Chord progressions, melodic patterns, music theory
-- **Spotify.com** - Artist discovery, genre characteristics, similar artists
+**Trigger conditions:**
+- "I want a sad song like Phoebe Bridgers"
+- "Something in Sabrina Carpenter's Manchild style"
+- "Taylor Swift folklore era vibes"
+- Any mention of artist name + song title or style reference
 
-**How to research:**
-1. When user mentions artist reference, fetch analysis from Genius or similar
-2. Study lyrical structure: verse patterns, chorus hooks, rhyme schemes
-3. Identify characteristic elements: metaphor usage, emotional tone, syllable patterns
-4. Note production style cues from descriptions and reviews
-5. Find similar artists for persona anchoring
+**Automated research workflow:**
 
-**Research workflow:**
-- User provides artist/song reference → Research structure and style
-- User wants specific genre → Research exemplar artists in that genre
-- User unclear on direction → Research similar successful songs
-- User wants to emulate style → Deep analysis of target artist's patterns
+1. **Extract from user request:**
+   - Artist name (required)
+   - Specific song name (if mentioned)
+   - Style/mood hints from user's description
 
-**Important:** Research is for understanding patterns and inspiration, not copying. Create original lyrics informed by studied structures.
+2. **Launch song-researcher sub-agent via Task tool:**
+   ```
+   Task tool:
+     subagent_type: "song-researcher"
+     description: "Research artist patterns"
+     prompt: "Research [Artist] - [Song if mentioned]. User wants [style/mood description]."
+   ```
+
+3. **Sub-agent performs automated research:**
+   - **Genius.com:** Fetches lyrics, structure, annotations for specific song or popular tracks
+   - **HookTheory/Chord sites:** Searches for chord progressions and musical analysis
+   - **Spotify/Music sites:** Finds genre tags, similar artists, production notes
+   - **Pattern extraction:** Analyzes syllables, rhyme schemes, metaphors, emotional arc
+   - **Multi-song analysis:** If specific song mentioned, also analyzes 2-3 other tracks for context
+   - **Confidence scoring:** Rates research quality (90-100% comprehensive, 70-89% good, 50-69% basic, <50% insufficient)
+
+4. **Receive structured research report:**
+   - Research Quality section (confidence score, sources used, songs analyzed)
+   - Primary Song Analysis (lyrical structure, thematic elements, musical context)
+   - Artist Context (consistent patterns across songs, variations observed)
+   - **Recommendations for Suno Prompt** (genre descriptors, vocal persona, lyrical guidance, production notes)
+   - Research Limitations (transparently notes missing data)
+
+5. **Use research findings to inform subsequent steps:**
+   - **Step 3 (Build Prompt):** Genre, vocal, instrumentation, production from research recommendations
+   - **Step 5 (Write Lyrics):** Syllable patterns, rhyme schemes, metaphor approach from analysis
+   - **Step 4 (Parameters):** Model selection based on researched style
+
+**Benefits of automated research:**
+- ✅ No manual browsing required
+- ✅ Structured pattern data every time
+- ✅ Multi-song comparative analysis
+- ✅ Confidence scoring shows data quality
+- ✅ Graceful degradation when data limited
+- ✅ Actionable recommendations ready for prompt building
+
+**Error handling:**
+- Artist not found → Sub-agent tries alternate spellings, returns partial results with low confidence
+- Limited data → Uses available sources, notes limitations clearly
+- Specific song unavailable → Falls back to analyzing popular songs, notes in report
+- No data at all → Returns empty report, main agent asks user for style guidance
+
+**Important:** Research is for understanding patterns and inspiration, not copying. Sub-agent extracts structural patterns; main agent creates completely original lyrics informed by these learned structures.
+
+**For standalone research:** Users can also invoke `/research-artist [Artist]` independently to explore patterns before creating songs.
 
 ### File Writing Tool
 
@@ -127,7 +166,7 @@ Use the Write tool to save complete prompts to organized project directories aft
 - Single markdown file per song containing all prompt components
 - Includes metadata, configuration, prompt, lyrics, and research notes
 
-### Practical Example: Interactive + Research Workflow
+### Practical Example: Interactive + Automated Research Workflow
 
 **User says:** "I want a sad song like Phoebe Bridgers"
 
@@ -144,25 +183,65 @@ Options:
 
 User selects: "All of the above"
 
-**Step 2 - Research on Genius.com:**
-- Fetch "Motion Sickness" or "Kyoto" lyrics
-- Analyze: 4-line verses, 8-10 syllables, loose rhyme, one central metaphor
-- Note: Conversational tone, specific imagery, vulnerable-to-defiant arc
+**Step 2 - Automated research (song-researcher sub-agent):**
 
-**Step 3 - Research on Spotify:**
-- Similar artists: Julien Baker, Lucy Dacus, Soccer Mommy
-- Genre tags: Indie folk, bedroom pop, singer-songwriter
-- Production notes from reviews: Lo-fi, intimate, authentic
-
-**Step 4 - Synthesize into prompt:**
+**Main agent launches research:**
 ```
-genre: "indie folk, bedroom pop, Phoebe Bridgers x Julien Baker sensibility"
-vocal: "soft female alto, confessional delivery, vulnerable yet defiant"
-[... complete structured prompt based on research]
+Task tool:
+  subagent_type: "song-researcher"
+  description: "Research Phoebe Bridgers patterns"
+  prompt: "Research Phoebe Bridgers. User wants sad, intimate, indie folk style."
 ```
 
-**Step 5 - Create original lyrics:**
-Using learned patterns (4-line verses, 8-10 syllables, one metaphor) but completely original content inspired by user's theme.
+**Sub-agent performs:**
+- WebSearch + WebFetch: "Phoebe Bridgers Motion Sickness lyrics Genius"
+- WebSearch + WebFetch: "Phoebe Bridgers Kyoto lyrics Genius" (context song)
+- WebSearch + WebFetch: "Phoebe Bridgers Scott Street lyrics Genius" (context song)
+- WebSearch: "Phoebe Bridgers genre Spotify similar artists"
+- WebSearch: "Phoebe Bridgers chord progressions"
+
+**Sub-agent returns structured report:**
+```markdown
+# Research Report: Phoebe Bridgers
+
+## Research Quality
+Confidence Score: 85% (Good)
+Sources Used: Genius ✓, Chords ✗, Spotify/Context ✓
+Songs Analyzed: 3 total (Motion Sickness, Kyoto, Scott Street)
+
+## Artist Context
+
+### Consistent Patterns
+- Syllable counts: 8-10 in verses, 6-9 in chorus
+- Rhyme: Loose/slant rhymes, conversational (ABCB common)
+- Structure: Verse-Chorus-Verse-Chorus-Bridge-Final Chorus
+- Metaphor: One central metaphor per song, concrete imagery
+- Tone: Vulnerable-to-defiant arc, confessional
+- Vocabulary: Specific details, conversational language
+
+## Recommendations for Suno Prompt
+
+Genre: "indie folk, 2020s bedroom pop, Phoebe Bridgers x Julien Baker sensibility"
+Vocal: "soft female alto, whisper-to-belt range, confessional delivery, vulnerable yet defiant, slight breathiness"
+Lyrical Guidance: 8-10 syllables verses, 6-9 chorus, loose ABCB rhyme, one central metaphor
+Production: "lo-fi warmth, close-mic intimacy, fingerpicked acoustic guitar, minimal percussion"
+```
+
+**Step 3 - Main agent uses research to build prompt:**
+```
+genre: "indie folk, 2020s bedroom pop, Phoebe Bridgers x Julien Baker sensibility, intimate singer-songwriter"
+vocal: "soft female alto, whisper-to-belt range, confessional delivery, vulnerable yet defiant, slight breathiness, conversational phrasing"
+instrumentation: "fingerpicked acoustic guitar, subtle upright bass, sparse piano, minimal brushed percussion"
+production: "lo-fi warmth, close-mic intimacy, bedroom aesthetic, natural dynamics, tape saturation"
+mood: "melancholic, vulnerable, bittersweet, confessional, quiet defiance"
+```
+
+**Step 4 - Create original lyrics using researched patterns:**
+- Use 8-10 syllable pattern from research
+- Apply loose ABCB rhyme scheme identified
+- Develop one central metaphor (as per pattern)
+- Maintain conversational tone observed
+- Create completely original content inspired by user's theme
 
 ## The Seven-Step Workflow
 
@@ -1041,8 +1120,8 @@ After creating prompts with this skill, they are automatically saved to:
 
 ## Workflow Summary
 
-1. **Understand** - Use AskUserQuestion to gather genre, mood, vocal, constraints; research artist references if provided
-2. **Research** - When artist/song mentioned, use web tools (Genius, HookTheory, Spotify) to analyze patterns and styles
+1. **Understand** - Use AskUserQuestion to gather genre, mood, vocal, constraints
+2. **Research (AUTOMATED)** - When artist/song mentioned, automatically launch song-researcher sub-agent for automated pattern analysis from Genius, HookTheory, Spotify; receive structured research report with syllable patterns, rhyme schemes, metaphor usage, production notes, and actionable recommendations
 3. **Select** - Choose model (v5 for acoustic, v4.5 for heavy) and parameters; use AskUserQuestion for guidance
 4. **Build** - Structure prompt with colon-and-quotes format, NO blank lines between sections, incorporating research findings
 5. **Configure** - Set vocal gender, exclusions, START_ON if needed
