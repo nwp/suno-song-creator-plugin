@@ -15,6 +15,7 @@ Suno Song Creator guides you through the entire music prompt creation workflow:
 - AI-slop avoidance for authentic, human-centered lyrics
 - **Independent quality review** via quality-reviewer sub-agent
 - Automatic file export to organized project directories
+- **🚀 Chrome automation to upload directly to Suno** (NEW in v2.0.0)
 
 ## Features
 
@@ -28,7 +29,7 @@ Suno Song Creator guides you through the entire music prompt creation workflow:
 6. **Write Effective Lyrics** - Meta tags, syllable control, AI-slop avoidance
 7. **Apply Realism & Genre Techniques** - Genre-specific strategies
 8. **Quality Review (OPTIONAL)** - Launch quality-reviewer sub-agent for professional assessment
-9. **Verify** - Character count validation
+9. **Upload to Suno (OPTIONAL)** - Automated Chrome-based upload to suno.com (NEW in v2.0.0)
 10. **Save to File** - Organized project-based export with all metadata
 
 ### 🎼 Genre-Specific Expertise
@@ -76,6 +77,47 @@ Returns actionable recommendations ready for Suno prompt building:
 - Production notes
 - Research limitations (missing data noted)
 
+### 🚀 Chrome Automation for Suno Upload (NEW in v2.0.0)
+
+**Complete End-to-End Automation** - Upload your prompts to suno.com with zero manual intervention:
+
+**Automated Upload Features:**
+- **Parses prompt.md files** - Extracts title, lyrics, styles, model, and all parameters
+- **Navigates to Suno automatically** - Opens suno.com/create and switches to Custom mode
+- **Fills ALL form fields** - Including complex React slider components (weirdness, style influence)
+- **Slider automation working** - Uses coordinate-based dragging for precise control
+- **Submits and monitors** - Clicks Create button and tracks generation
+- **Returns song URLs** - Provides direct links to your generated songs
+
+**How It Works:**
+1. After creating a prompt with the suno-song-creator skill, you'll be asked if you want to upload
+2. If yes, the suno-upload skill automatically:
+   - Reads your saved prompt.md file
+   - Opens Chrome and navigates to suno.com/create
+   - Fills in lyrics (with meta tags preserved, divider line removed)
+   - Sets the structured prompt in the Styles field
+   - Selects the correct model (v5, v4.5, etc.)
+   - Sets sliders to exact percentages (weirdness, style influence)
+   - Clicks vocal gender button (Female/Male)
+   - Adds excluded styles (Rock, Metal, etc.)
+3. Shows you a preview for final confirmation
+4. Clicks Create and returns your song URLs
+
+**Technical Achievement:**
+- Solved React slider interaction with coordinate-based dragging using `getBoundingClientRect()`
+- Handles all Suno form types: text inputs, dropdowns, buttons, custom sliders
+- Validated with successful song generation and parameter accuracy within ±1%
+
+**Requirements:**
+- Chrome MCP server (browser automation)
+- Suno account with available credits
+
+**Standalone Usage:**
+```bash
+/suno-upload
+```
+*Can upload any properly formatted prompt.md file, even if not created with this plugin*
+
 ### 🚫 AI-Slop Avoidance
 
 Comprehensive guidance to avoid generic AI lyric clichés:
@@ -118,6 +160,14 @@ Comprehensive guidance to avoid generic AI lyric clichés:
 ### 📋 Additional Skills
 
 **This plugin includes standalone skills for independent usage:**
+
+#### `/suno-upload` - Automated Chrome Upload (NEW in v2.0.0)
+- Upload any prompt.md file to suno.com with full automation
+- Handles all form fields including sliders
+- No human intervention required (except final confirmation)
+- Usage: `/suno-upload` (finds prompt.md in current directory)
+- Works with prompts created anywhere, not just this plugin
+- Returns song URLs after generation starts
 
 #### `/review-song` - Independent Quality Review
 - Review existing Suno prompts before submission
@@ -204,6 +254,11 @@ Generate a dark electronic track with 80s synth vibes
 **Standalone Skills:**
 
 ```
+/suno-upload
+```
+*Automatically uploads prompt.md to Suno with full form automation*
+
+```
 /research-artist Phoebe Bridgers
 ```
 *Researches artist patterns independently for later use*
@@ -227,7 +282,8 @@ The skill will guide you through:
 3. **Model selection** based on your genre and quality needs
 4. **Prompt building** with proper structure and formatting
 5. **Lyric creation** with meta tags and authenticity checks
-6. **File export** to your project directory
+6. **Optional upload to Suno** via Chrome automation
+7. **File export** to your project directory
 
 ### Example Interaction
 
@@ -262,14 +318,43 @@ Claude: Research complete! Analyzed "Motion Sickness" + 2 context songs.
         [Creates complete structured prompt with copyright-safe descriptors]
         [Writes original lyrics avoiding AI clichés using researched patterns]
         [Optionally launches quality-reviewer for assessment]
-        [Saves to organized project directory]
+
+Claude: Would you like me to upload this song to Suno now using Chrome automation?
+
+You: Yes
+
+Claude: [Launches suno-upload skill]
+        [Opens Chrome, navigates to suno.com/create]
+        [Fills all form fields: lyrics, styles, model v5, sliders at 40%/60%]
+        [Shows preview for confirmation]
+
+        Ready to create on Suno. Submit?
+
+You: Yes
+
+Claude: [Clicks Create button]
+        [Monitors generation]
+
+        ✅ Song submitted to Suno!
+        Generation started for "Fixer-Upper"
+
+        URLs:
+        - https://suno.com/song/abc123...
+        - https://suno.com/song/def456...
+
+        [Also saves prompt to organized project directory]
 ```
 
 ## Configuration
 
 No configuration required! The skill works out of the box.
 
-Optional: Customize project organization by specifying project names in your requests:
+**For Chrome automation (suno-upload):**
+- Requires Chrome MCP server to be installed and running
+- Requires Suno account with available credits
+- If Chrome MCP not available, manual upload instructions will be provided
+
+**Optional:** Customize project organization by specifying project names in your requests:
 ```
 Create a song for my "Summer Vibes" album
 ```
@@ -328,29 +413,31 @@ suno-song-creator-plugin/
 ├── .claude-plugin/
 │   └── plugin.json                 # Plugin manifest
 └── skills/
-    └── suno-song-creator/
-        ├── SKILL.md                # Main skill (v1.1.0)
-        ├── agents/                 # Sub-agents for specialized tasks
-        │   ├── quality-reviewer.md    # Quality assessment agent
-        │   └── song-researcher.md     # Artist/song research agent (NEW)
-        ├── skills/                 # Additional standalone skills
-        │   ├── review-song/           # Independent quality review
-        │   │   └── SKILL.md
-        │   └── research-artist/       # Independent artist research (NEW)
-        │       └── SKILL.md
-        ├── references/             # Reference documentation
-        │   ├── genre-clouds.md
-        │   ├── meta-tags-reference.md
-        │   ├── realism-descriptors.md
-        │   ├── model-comparison.md
-        │   └── artist-research-guide.md
-        ├── examples/               # Working prompt examples
-        │   ├── acoustic-folk-prompt.md
-        │   ├── electronic-edm-prompt.md
-        │   └── rock-alternative-prompt.md
-        └── utils/                  # Utility templates
-            ├── quality-review-prompt.md
-            └── research-report-template.md (future)
+    ├── suno-song-creator/
+    │   ├── SKILL.md                # Main skill (v1.1.0)
+    │   ├── agents/                 # Sub-agents for specialized tasks
+    │   │   ├── quality-reviewer.md    # Quality assessment agent
+    │   │   └── song-researcher.md     # Artist/song research agent
+    │   ├── skills/                 # Additional standalone skills
+    │   │   ├── review-song/           # Independent quality review
+    │   │   │   └── SKILL.md
+    │   │   └── research-artist/       # Independent artist research
+    │   │       └── SKILL.md
+    │   ├── references/             # Reference documentation
+    │   │   ├── genre-clouds.md
+    │   │   ├── meta-tags-reference.md
+    │   │   ├── realism-descriptors.md
+    │   │   ├── model-comparison.md
+    │   │   └── artist-research-guide.md
+    │   ├── examples/               # Working prompt examples
+    │   │   ├── acoustic-folk-prompt.md
+    │   │   ├── electronic-edm-prompt.md
+    │   │   └── rock-alternative-prompt.md
+    │   └── utils/                  # Utility templates
+    │       ├── quality-review-prompt.md
+    │       └── research-report-template.md (future)
+    └── suno-upload/                # Chrome automation upload (NEW in v2.0.0)
+        └── SKILL.md                # Automated Suno upload skill
 ```
 
 ## Reference Files
@@ -390,6 +477,19 @@ Contributions are welcome! Please:
 
 ## Version History
 
+- **2.0.0** - Added complete Chrome automation for Suno uploads
+  - **NEW: `/suno-upload` skill** - Automated upload to suno.com with zero manual intervention
+  - Parses prompt.md files (YAML, lyrics, structured prompts, parameters)
+  - Navigates to suno.com/create automatically, switches to Custom mode
+  - Fills ALL form fields: lyrics, styles, title, model selection
+  - **Slider automation achieved** - Coordinate-based dragging for weirdness/style influence sliders
+  - Handles React components using getBoundingClientRect() + left_click_drag
+  - Removes divider line (`///*****///`) from lyrics while preserving meta tags
+  - Sets vocal gender, exclude styles, and all advanced parameters
+  - User confirmation before submission
+  - Returns song URLs after generation starts
+  - Validated with successful song generation (±1% slider accuracy)
+  - Updated suno-song-creator to v1.1.0 with Step 9: Optional Upload to Suno
 - **1.1.0** - Added automated artist/song research via song-researcher sub-agent
   - Automated web fetching from Genius, HookTheory, Spotify
   - Pattern extraction (syllables, rhyme, structure, metaphors)
