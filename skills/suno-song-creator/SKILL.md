@@ -1,7 +1,7 @@
 ---
 name: Suno Song Creator
-description: This skill should be used when the user asks to "create a Suno prompt", "write a Suno song", "generate music with Suno", "help me with Suno", "make a song prompt", "create lyrics for Suno", "build a music prompt", or mentions Suno AI music generation. Provides comprehensive guidance for creating professional Suno prompts using advanced prompting strategies, structured formatting within 1000 character limit (NO blank lines between sections), parameter optimization, genre-specific techniques, interactive questioning with efficient project name collection, automated artist/song research via sub-agent (web fetching + pattern extraction), automatic file export to organized project directories, AI-slop avoidance for authentic human-centered lyrics, copyright-safe style descriptions that avoid artist/album/song names, character counting utilities for accurate verification, and optional independent quality review via sub-agent with genre-specific refinement (user-controlled evaluation standards for pop vs. indie/folk specificity, contemporary vs. timeless balance, wordiness tolerance, and show/tell ratio).
-version: 1.2.0
+description: This skill should be used when the user asks to "create a Suno prompt", "write a Suno song", "generate music with Suno", "help me with Suno", "make a song prompt", "create lyrics for Suno", "build a music prompt", or mentions Suno AI music generation. Provides comprehensive guidance for creating professional Suno prompts using advanced prompting strategies, structured formatting within 1000 character limit (NO blank lines between sections), parameter optimization, genre-specific techniques, interactive questioning with efficient project name collection, automated artist/song research via sub-agent (web fetching + pattern extraction), automatic file export to organized project directories, AI-slop avoidance for authentic human-centered lyrics, copyright-safe style descriptions that avoid artist/album/song names, character counting utilities for accurate verification, and optional independent quality review via sub-agent for professional assessment.
+version: 1.1.0
 ---
 
 # Suno Song Creator
@@ -1071,6 +1071,75 @@ Track between song creations to streamline sequential workflow:
 - Markdown format supports version control (git-friendly)
 - Complete documentation of creative decisions
 - Easy to iterate and refine prompts
+
+### Step 9: Optionally Upload to Suno (Web Automation)
+
+After saving the prompt file, you can automatically upload it to suno.com using Chrome automation.
+
+**When to offer:**
+- Immediately after Step 8 completes
+- After successfully saving prompt.md to disk
+- Only if Chrome MCP server is available
+
+**Workflow:**
+
+1. **Ask user for confirmation:**
+```
+Use AskUserQuestion:
+Question: "Would you like me to upload this song to Suno now using Chrome automation?"
+Header: "Upload"
+Options:
+- "Yes, upload to Suno now" (proceed with automation)
+- "No, I'll upload manually later" (skip automation)
+```
+
+2. **If user selects "Yes":**
+   - Invoke the suno-upload skill using Skill tool
+   - Pass context: The file path of the just-created prompt.md
+   - The suno-upload skill will handle:
+     - Parsing the prompt.md file
+     - Navigating to Suno Create interface
+     - Filling all form fields
+     - Asking for final confirmation
+     - Submitting and returning song URLs
+
+3. **If user selects "No":**
+   - Inform user: "You can upload this prompt later by running `/suno-upload` from the directory containing the prompt.md file."
+   - Provide the file path: "Prompt saved at: `{project-name}/{song-title-slug}/prompt.md`"
+
+**Example invocation:**
+```
+Skill tool:
+skill: "suno-upload"
+args: "" (suno-upload will find the prompt.md automatically)
+```
+
+**Integration notes:**
+- suno-upload is a separate, reusable skill
+- Can be invoked independently via `/suno-upload` command
+- Works with any properly formatted prompt.md file
+- Requires Chrome MCP server to be installed and active
+- User gets final confirmation before submission to Suno
+- Song generation typically takes 1-2 minutes after submission
+
+**Error handling:**
+- If Chrome MCP not available: Skip this step gracefully
+  - Message: "Chrome automation not available. Upload manually at https://suno.com/create"
+- If suno-upload skill fails: Don't block workflow
+  - Message: "Upload failed. Prompt is saved and can be uploaded manually."
+- If user lacks Suno credits: suno-upload will handle error
+  - Returns clear message about credit status
+
+**Benefits of automation:**
+- Saves time: No manual copy-paste
+- Reduces errors: Automated field mapping
+- Preserves formatting: Lyrics meta tags intact
+- Consistent: Same process every time
+- Convenient: One-click from prompt creation to song generation
+
+**Tools used:**
+- AskUserQuestion - Get upload confirmation
+- Skill - Invoke suno-upload skill
 
 ## Escaping Genre Gravity Wells
 
