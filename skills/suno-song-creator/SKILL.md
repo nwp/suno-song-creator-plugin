@@ -1,7 +1,7 @@
 ---
 name: Suno Song Creator
-description: This skill should be used when the user asks to "create a Suno prompt", "write a Suno song", "generate music with Suno", "help me with Suno", "make a song prompt", "create lyrics for Suno", "build a music prompt", or mentions Suno AI music generation. Provides comprehensive guidance for creating professional Suno prompts using advanced prompting strategies, structured formatting within 1000 character limit (NO blank lines between sections), parameter optimization, genre-specific techniques, interactive questioning with efficient project name collection, artist/song research, automatic file export to organized project directories, AI-slop avoidance for authentic human-centered lyrics, copyright-safe style descriptions that avoid artist/album/song names, and character counting utilities for accurate verification.
-version: 0.9.0
+description: This skill should be used when the user asks to "create a Suno prompt", "write a Suno song", "generate music with Suno", "help me with Suno", "make a song prompt", "create lyrics for Suno", "build a music prompt", or mentions Suno AI music generation. Provides comprehensive guidance for creating professional Suno prompts using advanced prompting strategies, structured formatting within 1000 character limit (NO blank lines between sections), parameter optimization, genre-specific techniques, interactive questioning with efficient project name collection, artist/song research, automatic file export to organized project directories, AI-slop avoidance for authentic human-centered lyrics, copyright-safe style descriptions that avoid artist/album/song names, character counting utilities for accurate verification, and optional independent quality review via sub-agent for professional assessment.
+version: 1.0.0
 ---
 
 # Suno Song Creator
@@ -627,9 +627,90 @@ Balance instrumentation with attitude:
 - Attitude: `anthemic, raw energy, introspective yet powerful`
 - Production: `live recording quality, distorted guitar tone, reverb-heavy`
 
-### Step 7: Save Prompt to File
+### Step 7: Quality Review (OPTIONAL)
 
-After creating the complete Suno prompt, save it to a structured location for future reference, iteration, and organization.
+After applying genre-specific strategies, optionally launch the quality-reviewer sub-agent for independent professional assessment before finalizing the prompt.
+
+**When to use quality review:**
+- First time creating a song in a new genre
+- Want professional quality feedback before submission to Suno
+- Uncertain about prompt effectiveness or lyric quality
+- Iterating to improve an existing prompt
+- Want to catch AI-slop, clichés, or poor quality lines
+
+**Automatic handoff from workflow:**
+When user says "Yes" to quality review:
+1. Main agent **automatically** passes prompt + lyrics to quality-reviewer
+2. **No manual input required** from user
+3. Seamless integration - already have all needed data:
+   - Structured prompt (genre through mood sections) from Steps 3-4
+   - Complete lyrics with meta tags from Step 5
+   - Context (genre, mood, vocal style) from Step 1
+4. Launch quality-reviewer via Task tool with subagent_type "quality-reviewer"
+5. Receive structured feedback with ratings and recommendations
+
+**Quality evaluation covers:**
+- **Prompt Quality:** Structure, specificity, copyright safety, genre alignment
+- **Lyric Quality:**
+  - AI-slop detection (generic phrases like "neon lights", "echoes in the void")
+  - Cliché detection (overused phrases, tired metaphors, lazy rhyming)
+  - Poor quality lines (awkward phrasing, nonsensical imagery, clunky lines)
+  - Specificity vs. abstractions
+  - Metaphor consistency
+  - Syllable patterns
+  - Rhyme scheme and quality
+  - Style-lyric consistency (does content match genre?)
+  - Gender-pronoun consistency (POV clarity for vocalist)
+  - General taste (catchiness, flow, memorability, sophistication)
+
+**Review workflow:**
+1. After completing Steps 1-6, ask user: "Would you like independent quality review before saving?"
+2. If user says "Yes":
+   a. Extract genre, mood, vocal style from Step 1 data
+   b. Sanitize input (remove any "AI-generated" references)
+   c. Construct neutral review request: "Evaluate this {genre} song prompt and lyrics for professional production quality"
+   d. Launch quality-reviewer sub-agent via Task tool
+   e. Receive structured feedback categorized by severity (CRITICAL/SUGGESTED/OPTIONAL)
+3. Present recommendations to user via AskUserQuestion:
+   - "Apply all suggested improvements"
+   - "Apply specific improvements (select which)"
+   - "Skip quality review and proceed to save"
+4. If user applies improvements:
+   a. Make the selected changes to prompt and/or lyrics
+   b. Re-verify character count (return to character verification below)
+   c. Optional: "Review again?" for iterative refinement
+5. If user skips or completes improvements: Proceed to Step 8 (Save)
+
+**Iterative refinement:**
+- No iteration limit - user controls when to stop
+- Can review multiple times after applying improvements
+- Each review is independent (fresh evaluation)
+
+**Context isolation:**
+The quality-reviewer sub-agent:
+- Has NO knowledge of conversation history
+- Does NOT know content is AI-generated
+- Receives ONLY: prompt text, lyrics text, basic context (genre/mood/vocals)
+- Evaluates against professional production standards
+- Provides unbiased, independent quality assessment
+
+**For standalone reviews:**
+Users can also invoke quality review independently via `/review-song` skill to review existing prompts or external content.
+
+**Benefits:**
+- Independent evaluation without main agent bias
+- Catches AI-slop patterns that sound artificial
+- Identifies overused clichés and poor quality lines
+- Verifies copyright safety (no artist/band/album names)
+- Ensures specificity and concrete imagery
+- Validates style-lyric consistency for genre
+- Assesses rhyme schemes and quality
+- Checks gender-pronoun consistency
+- Provides actionable improvements before final version
+
+### Step 8: Save Prompt to File
+
+After creating the complete Suno prompt (and optionally reviewing quality), save it to a structured location for future reference, iteration, and organization.
 
 **🚨 CRITICAL - Before saving, verify character count with the counting utility:**
 
@@ -967,8 +1048,9 @@ After creating prompts with this skill, they are automatically saved to:
 5. **Configure** - Set vocal gender, exclusions, START_ON if needed
 6. **Write** - Create original lyrics informed by research patterns, with meta tags and proper structure
 7. **Apply** - Use genre-specific strategies (realism for acoustic, synthesis for electronic)
-8. **Verify** - Use `count-prompt.py` or `count-prompt.js` to verify character count (must be under 1000), ensure no blank lines
-9. **Save** - Export complete prompt with verified character count to organized project directory structure
+8. **Quality Review (OPTIONAL)** - Launch quality-reviewer sub-agent for independent professional assessment of prompt and lyrics against production standards (AI-slop, clichés, poor quality lines, rhyme, style-fit, gender-pronoun consistency, general taste); user decides whether to apply improvements; supports unlimited iterative refinement
+9. **Verify** - Use `count-prompt.py` or `count-prompt.js` to verify character count (must be under 1000), ensure no blank lines
+10. **Save** - Export complete prompt with verified character count to organized project directory structure
 
 **🚨 CRITICAL:** Always use the character counting utilities in `utils/` before claiming a character count. LLMs cannot accurately count characters.
 
