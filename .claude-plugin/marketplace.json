@@ -1,0 +1,59 @@
+{
+  "name": "suno-tools",
+  "owner": {
+    "name": "Nathan Phelps",
+    "email": "me@nathanwphelps.com"
+  },
+  "metadata": {
+    "description": "Professional tools for Suno AI music creation - from research-driven prompt generation to automated Chrome upload",
+    "version": "2.0.0",
+    "pluginRoot": "./skills"
+  },
+  "plugins": [
+    {
+      "name": "suno-song-creator",
+      "source": "./skills/suno-song-creator",
+      "description": "Create professional Suno prompts with automated artist research, structured prompts, genre-specific techniques, AI-slop avoidance, and quality review",
+      "version": "1.1.0",
+      "author": {
+        "name": "Nathan Phelps"
+      },
+      "homepage": "https://github.com/nwp/suno-song-creator-plugin",
+      "repository": "https://github.com/nwp/suno-song-creator-plugin",
+      "license": "MIT",
+      "keywords": [
+        "suno",
+        "music",
+        "ai-music",
+        "prompt-engineering",
+        "lyrics",
+        "songwriting",
+        "music-generation",
+        "artist-research",
+        "quality-review"
+      ],
+      "category": "creative-tools"
+    },
+    {
+      "name": "suno-upload",
+      "source": "./skills/suno-upload",
+      "description": "Automated Chrome-based upload to suno.com with complete form automation including React slider control. No human intervention required.",
+      "version": "2.0.0",
+      "author": {
+        "name": "Nathan Phelps"
+      },
+      "homepage": "https://github.com/nwp/suno-song-creator-plugin#-chrome-automation-for-suno-upload-new-in-v200",
+      "repository": "https://github.com/nwp/suno-song-creator-plugin",
+      "license": "MIT",
+      "keywords": [
+        "suno",
+        "automation",
+        "chrome",
+        "browser-automation",
+        "music-upload",
+        "web-automation"
+      ],
+      "category": "automation"
+    }
+  ]
+}
