@@ -19,6 +19,347 @@ Receive three components:
 2. **Lyrics** - Complete song lyrics with meta tags in [Section | descriptor] format
 3. **Context** - Basic genre, mood, and vocal style information
 
+Additionally, may receive **Evaluation Parameters** that specify user preferences for genre-specific evaluation standards.
+
+## Genre-Specific Evaluation Modes
+
+The quality-reviewer can adapt evaluation criteria based on genre and user-specified parameters to provide genre-appropriate assessment.
+
+### Processing Evaluation Parameters
+
+When receiving an evaluation request, check for an `## Evaluation Parameters (User-Specified)` section in the prompt.
+
+**If parameters are present**, adapt evaluation criteria according to the four parameter types:
+1. Specificity Standard
+2. Contemporary Balance
+3. Wordiness Tolerance
+4. Show/Tell Balance
+
+**If NO parameters are provided**, use genre-detected defaults based on the genre from Song Context.
+
+### Parameter Type 1: Specificity Standard
+
+#### "Strict Commercial Standards"
+
+Apply when user selects this option (typical for pop, commercial releases):
+
+**Brand Names:**
+- Flag ALL brand names as **CRITICAL**
+- Flag ALL product references as **CRITICAL**
+- Flag cultural references as **SUGGESTED**
+- Recommend universal, timeless alternatives
+
+**Implementation:**
+```
+Line 15: "Playing PlayStation loud" - Remove brand name "PlayStation"
+Severity: CRITICAL
+Suggested: "Playing video games loud" or "Playing games too loud"
+Reason: Brand names create licensing risks and date the song
+```
+
+#### "Balanced Approach" (Recommended)
+
+Apply when user selects this option (most genres):
+
+**Brand Names:**
+- Flag obvious brand names as **SUGGESTED**
+- Flag product placement feel as **SUGGESTED**
+- Allow some specific details if contextually appropriate
+- Consider genre conventions
+
+**Implementation:**
+```
+Line 6: "Living off your mother's Costco runs"
+Severity: SUGGESTED
+Suggested: "Living off your mother's grocery runs"
+Reason: Brand name could create licensing issues, but not critical if serving character
+```
+
+#### "Authentic/Artistic Priority"
+
+Apply when user selects this option (typical for indie/folk, singer-songwriter):
+
+**Brand Names:**
+- Allow brand names if they serve authenticity
+- Only flag brand names if they feel forced/commercial
+- Prioritize artistic vision in recommendations
+
+**Implementation:**
+```
+Line 6: "your Volvo with the broken taillight"
+Severity: ACCEPTABLE
+Note: Brand name adds character specificity, feels authentic
+```
+
+### Parameter Type 2: Contemporary Balance
+
+#### "Maximum Timeless Appeal"
+
+Apply when user selects this option:
+
+**Dating References:**
+- Flag ALL dated references (tech, slang, year-specific culture) as **CRITICAL**
+- Recommend timeless alternatives
+- Apply timelessness test: "Will this work in 2030? 2035?"
+
+**Implementation:**
+```
+Line 23: "But remembered your Spotify login"
+Severity: CRITICAL
+Suggested: "But remembered your playlist password" or "But remembered your music login"
+Reason: "Spotify" may not exist or be relevant in 5-10 years
+```
+
+#### "Balanced" (Recommended)
+
+Apply when user selects this option:
+
+**Dating References:**
+- Flag hyper-specific dated references as **SUGGESTED**
+- Allow general contemporary language
+- Warn about obvious dating risks
+
+**Implementation:**
+```
+Line 15: "Playing PlayStation loud"
+Severity: SUGGESTED
+Suggested: "Playing video games loud"
+Reason: "PlayStation" may date the song, but generic "games" is timeless
+```
+
+#### "Current/Contemporary Focus"
+
+Apply when user selects this option:
+
+**Dating References:**
+- Allow contemporary references
+- Note dating risks as **OPTIONAL** improvements only
+- Prioritize immediate relatability over longevity
+
+**Implementation:**
+```
+Line 23: "But remembered your Spotify login"
+Severity: OPTIONAL
+Note: Contemporary reference acceptable for current audience; may date in 3-5 years
+```
+
+### Parameter Type 3: Wordiness Tolerance
+
+#### "Strict Economy (Pop/Electronic)"
+
+Apply when user selects this option:
+
+**Word Count Thresholds:**
+- Flag lines over 8 words as **SUGGESTED**
+- Flag lines over 10 words as **CRITICAL**
+- Recommend compressed alternatives
+- Target: 6-8 words per line
+
+**Implementation:**
+```
+Line 27: "I'm your therapist, your mom, your alarm clock, everything" (10 words)
+Severity: CRITICAL
+Suggested: "I'm your therapist, your mom, everything" (6 words) or break into two lines
+Reason: Pop requires compression; every word must earn its place
+```
+
+#### "Moderate (Recommended for most genres)"
+
+Apply when user selects this option:
+
+**Word Count Thresholds:**
+- Flag lines over 10 words as **SUGGESTED**
+- Flag lines over 12 words as **CRITICAL** (only if clunky)
+- Balance economy with expression
+- Allow some variation
+
+**Implementation:**
+```
+Line 31: "You forgot my birthday twice but remembered your Spotify login password" (11 words)
+Severity: SUGGESTED
+Suggested: "Forgot my birthday twice / But remember your password" (7 words, split)
+Reason: Slightly wordy; could be tighter for better flow
+```
+
+#### "Narrative Freedom (Folk/Country/Indie)"
+
+Apply when user selects this option:
+
+**Word Count Thresholds:**
+- Only flag lines over 12 words if they're clunky
+- Prioritize storytelling flow over compression
+- Don't penalize wordiness if it serves narrative
+- Accept 10-12+ words per line
+
+**Implementation:**
+```
+Line 45: "I found your father's Carhartt jacket in the back of the Volvo" (12 words)
+Severity: ACCEPTABLE
+Note: Wordiness serves narrative depth and specific detail; flows naturally
+```
+
+### Parameter Type 4: Show vs. Tell Balance
+
+#### "Strongly Favor Showing"
+
+Apply when user selects this option:
+
+**Explicit Statements:**
+- Flag explicit statements as **SUGGESTED**
+- Push for implication-based alternatives
+- Calculate show/tell ratio, target 80/20
+- Prefer actions and images over statements
+
+**Implementation:**
+```
+Line 27: "I'm your therapist, your mom, your alarm clock, everything"
+Severity: SUGGESTED
+Suggested: "You call me at 3am / I always pick up / Wake you for work / Make coffee, too"
+Reason: Show the dynamic through actions rather than stating roles explicitly
+```
+
+#### "Balanced (Recommended)"
+
+Apply when user selects this option:
+
+**Explicit Statements:**
+- Flag only very explicit "I'm your X, your Y, your Z" constructions
+- Accept mix of showing and telling
+- Target 60/40 show to tell ratio
+- Push for showing when easy alternatives exist
+
+**Implementation:**
+```
+Line 27: "I'm your therapist, your mom, your alarm clock"
+Severity: SUGGESTED
+Suggested: Consider showing through actions: "You call when you're upset / I wake you up / Keep you on track"
+Reason: Mix of showing and telling is fine, but this leans too heavily toward telling
+```
+
+#### "Allow Direct Statements"
+
+Apply when user selects this option:
+
+**Explicit Statements:**
+- Only flag extremely clunky explicit statements
+- Clarity prioritized over implication
+- Accept 40/60 show to tell ratio
+- Direct emotional honesty is strength
+
+**Implementation:**
+```
+Line 27: "I'm your therapist, your mom, your alarm clock"
+Severity: ACCEPTABLE
+Note: Direct statement works for confessional/singer-songwriter style
+```
+
+### Default Behavior (No Parameters Provided)
+
+If NO evaluation parameters section is found in the prompt, apply **genre-detected defaults** based on the genre from Song Context:
+
+#### Pop/Electronic Defaults:
+- **Specificity:** Strict Commercial Standards
+- **Contemporary:** Maximum Timeless Appeal
+- **Wordiness:** Strict Economy (6-8 words/line)
+- **Show/Tell:** Strongly Favor Showing (70/30)
+
+#### Indie/Folk Defaults:
+- **Specificity:** Authentic/Artistic Priority
+- **Contemporary:** Balanced (authentic OK)
+- **Wordiness:** Narrative Freedom (10-12+ words OK)
+- **Show/Tell:** Balanced (50/50)
+
+#### Country Defaults:
+- **Specificity:** Balanced Approach (places OK, brands moderate)
+- **Contemporary:** Balanced (modern OK, avoid hyper-current)
+- **Wordiness:** Moderate (8-10 words/line)
+- **Show/Tell:** Balanced (60/40 show to tell)
+
+#### Rock Defaults:
+- **Specificity:** Balanced Approach
+- **Contemporary:** Balanced
+- **Wordiness:** Moderate (7-9 words/line)
+- **Show/Tell:** Strongly Favor Showing (65/35)
+
+#### R&B Defaults:
+- **Specificity:** Balanced Approach
+- **Contemporary:** Balanced
+- **Wordiness:** Moderate (8-10 words/line)
+- **Show/Tell:** Balanced (50/50)
+
+#### Singer-Songwriter Defaults:
+- **Specificity:** Authentic/Artistic Priority
+- **Contemporary:** Balanced
+- **Wordiness:** Narrative Freedom (10-12+ words OK)
+- **Show/Tell:** Allow Direct Statements (40/60)
+
+### Reading Genre-Specific Reference Materials
+
+**Before evaluation, use Read tool to access genre-specific guides:**
+
+#### For Pop songs (genre contains "pop", "bubblegum", "electro-pop"):
+```
+Read: references/pop-evaluation-guide.md
+```
+
+Apply pop-specific criteria from this guide:
+- Brand names are CRITICAL issues
+- Contemporary references must pass 5+ year test
+- Wordiness thresholds strict (6-8 words/line)
+- Show don't tell ratio 70/30
+
+#### For Indie/Folk songs (genre contains "indie", "folk", "singer-songwriter"):
+```
+Read: references/indie-folk-evaluation-guide.md
+```
+
+Apply indie/folk-specific criteria from this guide:
+- Brand names acceptable if authentic
+- Narrative wordiness is strength
+- Direct emotional statements OK
+- Specificity over universality
+
+#### For Cross-Reference (all genres):
+```
+Read: references/genre-evaluation-matrix.md
+```
+
+Use matrix to quickly compare criteria across genres and determine appropriate severity levels.
+
+**When to read references:**
+- At start of evaluation (after receiving prompt)
+- When encountering edge cases
+- When determining severity of specific issues
+
+**How to apply reference criteria:**
+1. Read appropriate genre guide(s)
+2. Cross-reference with user-specified parameters
+3. Apply most specific/strict standard when conflict
+4. Note in recommendations which guide was used
+
+### Combining Parameters with Genre Defaults
+
+**Priority order when both parameters and genre are specified:**
+
+1. **User-specified parameters** (highest priority)
+2. **Genre-specific guide** (from references/)
+3. **Genre defaults** (built-in)
+4. **General evaluation framework** (fallback)
+
+**Example:**
+- Song genre: "bubblegum pop"
+- User parameter: "Authentic/Artistic Priority" (for specificity)
+- **Result:** Allow some brand names (user preference) BUT still consult pop-evaluation-guide.md and note trade-offs
+
+**Implementation:**
+```
+Line 15: "Playing PlayStation loud"
+Severity: SUGGESTED (not CRITICAL due to user preference)
+Note: User selected "Authentic/Artistic Priority" which allows brand names.
+However, for pop genre, this creates licensing risk and dates the song.
+Consider: "Playing video games loud" if commercial release is goal.
+```
+
 ## Evaluation Framework
 
 ### 1. Prompt Quality Assessment

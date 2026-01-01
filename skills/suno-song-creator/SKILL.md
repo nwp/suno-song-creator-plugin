@@ -1,7 +1,7 @@
 ---
 name: Suno Song Creator
-description: This skill should be used when the user asks to "create a Suno prompt", "write a Suno song", "generate music with Suno", "help me with Suno", "make a song prompt", "create lyrics for Suno", "build a music prompt", or mentions Suno AI music generation. Provides comprehensive guidance for creating professional Suno prompts using advanced prompting strategies, structured formatting within 1000 character limit (NO blank lines between sections), parameter optimization, genre-specific techniques, interactive questioning with efficient project name collection, automated artist/song research via sub-agent (web fetching + pattern extraction), automatic file export to organized project directories, AI-slop avoidance for authentic human-centered lyrics, copyright-safe style descriptions that avoid artist/album/song names, character counting utilities for accurate verification, and optional independent quality review via sub-agent for professional assessment.
-version: 1.1.0
+description: This skill should be used when the user asks to "create a Suno prompt", "write a Suno song", "generate music with Suno", "help me with Suno", "make a song prompt", "create lyrics for Suno", "build a music prompt", or mentions Suno AI music generation. Provides comprehensive guidance for creating professional Suno prompts using advanced prompting strategies, structured formatting within 1000 character limit (NO blank lines between sections), parameter optimization, genre-specific techniques, interactive questioning with efficient project name collection, automated artist/song research via sub-agent (web fetching + pattern extraction), automatic file export to organized project directories, AI-slop avoidance for authentic human-centered lyrics, copyright-safe style descriptions that avoid artist/album/song names, character counting utilities for accurate verification, and optional independent quality review via sub-agent with genre-specific refinement (user-controlled evaluation standards for pop vs. indie/folk specificity, contemporary vs. timeless balance, wordiness tolerance, and show/tell ratio).
+version: 1.2.0
 ---
 
 # Suno Song Creator
@@ -743,22 +743,107 @@ When user says "Yes" to quality review:
   - General taste (catchiness, flow, memorability, sophistication)
 
 **Review workflow:**
+
 1. After completing Steps 1-6, ask user: "Would you like independent quality review before saving?"
-2. If user says "Yes":
+
+2. If user says "Yes", ask genre-specific refinement questions to adapt evaluation criteria:
+
+   **Question 1: Specificity Preference**
+   ```
+   Question: "How should I evaluate specificity for this {genre} song?"
+   Header: "Specificity"
+   multiSelect: false
+   Options:
+     - label: "Strict Commercial Standards"
+       description: "Avoid ALL brand names, product references, and dated cultural references. Prioritize universal, timeless language suitable for radio/commercial release."
+
+     - label: "Balanced Approach (Recommended)"
+       description: "Flag obvious brand names and dated references, but allow some specific details if they serve the song. Consider genre conventions."
+
+     - label: "Authentic/Artistic Priority"
+       description: "Allow specific brands, places, and cultural references if they enhance authenticity and storytelling. Prioritize artistic vision over commercial considerations."
+   ```
+
+   **Question 2: Contemporary vs. Timeless Balance**
+   ```
+   Question: "What's your priority for contemporary relevance vs. timeless appeal?"
+   Header: "Contemporary"
+   multiSelect: false
+   Options:
+     - label: "Maximum Timeless Appeal"
+       description: "Avoid all dated references. Flag anything that might age (tech products, current slang, 2025-specific culture). Prioritize songs that work in any era."
+
+     - label: "Balanced (Recommended)"
+       description: "Accept some contemporary references if not too specific. Flag obvious dating risks (product names, specific tech). Allow current but not hyper-specific language."
+
+     - label: "Current/Contemporary Focus"
+       description: "Embrace contemporary references for immediate relatability. Accept that song may date. Prioritize connecting with current audience over timelessness."
+   ```
+
+   **Question 3: Wordiness Tolerance**
+   ```
+   Question: "How should I evaluate lyrical economy for this {genre} song?"
+   Header: "Wordiness"
+   multiSelect: false
+   Options:
+     - label: "Strict Economy (Pop/Electronic)"
+       description: "Flag lines over 8 words. Prioritize compressed, punchy language. Every word must earn its place."
+
+     - label: "Moderate (Recommended for most genres)"
+       description: "Flag lines over 10 words as suggestions. Balance economy with expression. Allow some variation."
+
+     - label: "Narrative Freedom (Folk/Country/Indie)"
+       description: "Allow 10-12+ word lines. Prioritize storytelling flow over compression. Wordiness acceptable if it serves narrative."
+   ```
+
+   **Question 4: Show vs. Tell Balance**
+   ```
+   Question: "What balance of 'showing' vs. 'telling' should I expect?"
+   Header: "Show/Tell"
+   multiSelect: false
+   Options:
+     - label: "Strongly Favor Showing"
+       description: "Flag explicit statements. Push for implication over explanation. 80/20 show to tell ratio."
+
+     - label: "Balanced (Recommended)"
+       description: "Accept mix of showing and telling. Flag overly explicit or overly abstract. 60/40 show to tell."
+
+     - label: "Allow Direct Statements"
+       description: "Explicit emotional statements acceptable. Clarity prioritized over implication. 40/60 show to tell."
+   ```
+
+3. Construct parameterized prompt for quality-reviewer:
    a. Extract genre, mood, vocal style from Step 1 data
    b. Sanitize input (remove any "AI-generated" references)
    c. Construct neutral review request: "Evaluate this {genre} song prompt and lyrics for professional production quality"
-   d. Launch quality-reviewer sub-agent via Task tool
-   e. Receive structured feedback categorized by severity (CRITICAL/SUGGESTED/OPTIONAL)
-3. Present recommendations to user via AskUserQuestion:
+   d. Append evaluation parameters section:
+   ```markdown
+   ## Evaluation Parameters (User-Specified)
+
+   **Specificity Standard:** {user_response_from_question_1}
+   **Contemporary Balance:** {user_response_from_question_2}
+   **Wordiness Tolerance:** {user_response_from_question_3}
+   **Show/Tell Balance:** {user_response_from_question_4}
+
+   Please adapt your evaluation criteria according to these user preferences. Consult the appropriate genre-specific reference guide:
+   - Pop: references/pop-evaluation-guide.md
+   - Indie/Folk: references/indie-folk-evaluation-guide.md
+   - Cross-reference: references/genre-evaluation-matrix.md
+   ```
+
+4. Launch quality-reviewer sub-agent via Task tool with parameterized prompt and receive structured feedback categorized by severity (CRITICAL/SUGGESTED/OPTIONAL)
+
+5. Present recommendations to user via AskUserQuestion:
    - "Apply all suggested improvements"
    - "Apply specific improvements (select which)"
    - "Skip quality review and proceed to save"
-4. If user applies improvements:
+
+6. If user applies improvements:
    a. Make the selected changes to prompt and/or lyrics
    b. Re-verify character count (return to character verification below)
    c. Optional: "Review again?" for iterative refinement
-5. If user skips or completes improvements: Proceed to Step 8 (Save)
+
+7. If user skips or completes improvements: Proceed to Step 8 (Save)
 
 **Iterative refinement:**
 - No iteration limit - user controls when to stop
@@ -772,6 +857,17 @@ The quality-reviewer sub-agent:
 - Receives ONLY: prompt text, lyrics text, basic context (genre/mood/vocals)
 - Evaluates against professional production standards
 - Provides unbiased, independent quality assessment
+
+**Genre-specific refinement benefits:**
+- **Pop songs:** Flags brand names as CRITICAL (licensing risks, dating issues, commercial feel)
+- **Indie/Folk songs:** Allows brand names as ACCEPTABLE (authenticity, character detail, grounded storytelling)
+- **User control:** Commercial vs. artistic priorities user-specified
+- **Timeless vs. contemporary:** User chooses dating risk tolerance
+- **Wordiness standards:** Genre-appropriate word count thresholds (Pop: 6-8, Indie: 10-12+)
+- **Show/Tell balance:** Adapts to genre conventions (Pop: 70/30, Indie: 50/50, Singer-Songwriter: 40/60)
+- **Backward compatible:** Works without parameters (uses genre-detected defaults)
+- **Transparent:** User sees evaluation preferences applied
+- **Flexible:** Same song can be reviewed with different criteria
 
 **For standalone reviews:**
 Users can also invoke quality review independently via `/review-song` skill to review existing prompts or external content.

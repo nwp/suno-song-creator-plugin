@@ -38,6 +38,93 @@ Provide structured feedback with:
 - Actionable recommendations categorized by severity (CRITICAL/SUGGESTED/OPTIONAL)
 ```
 
+## Evaluation Parameters Section (NEW)
+
+When user specifies genre-specific refinement preferences, append this section to the review request AFTER the lyrics section and BEFORE the evaluation request section:
+
+```markdown
+## Evaluation Parameters (User-Specified)
+
+**Specificity Standard:** {user_choice_from_question_1}
+- Options: "Strict Commercial Standards" | "Balanced Approach" | "Authentic/Artistic Priority"
+
+**Contemporary Balance:** {user_choice_from_question_2}
+- Options: "Maximum Timeless Appeal" | "Balanced" | "Current/Contemporary Focus"
+
+**Wordiness Tolerance:** {user_choice_from_question_3}
+- Options: "Strict Economy (Pop/Electronic)" | "Moderate (Recommended)" | "Narrative Freedom (Folk/Country/Indie)"
+
+**Show/Tell Balance:** {user_choice_from_question_4}
+- Options: "Strongly Favor Showing" | "Balanced (Recommended)" | "Allow Direct Statements"
+
+Please adapt your evaluation criteria according to these user preferences. Consult the appropriate genre-specific reference guide:
+- Pop: references/pop-evaluation-guide.md
+- Indie/Folk: references/indie-folk-evaluation-guide.md
+- Cross-reference: references/genre-evaluation-matrix.md
+```
+
+**When to include this section:**
+- Include when user answers the 4 genre-specific refinement questions
+- Omit when user skips refinement (backward compatibility)
+- Parameters guide severity ratings (CRITICAL/SUGGESTED/OPTIONAL)
+
+**How quality-reviewer processes parameters:**
+- Reads appropriate reference guide based on genre
+- Applies user-specified standards (e.g., "Strict Commercial" → flag all brands as CRITICAL)
+- Uses genre-evaluation-matrix.md for cross-reference decisions
+- Falls back to genre-detected defaults if no parameters provided
+
+**Example with parameters:**
+```markdown
+Evaluate this song prompt and lyrics for professional production quality.
+
+## Song Context
+
+- **Genre:** bubblegum pop
+- **Mood:** playful, sarcastic
+- **Vocal Style:** female pop vocals, playful delivery
+
+## Structured Prompt
+
+genre: "bubblegum pop, synth-pop, disco-influenced pop"
+vocal: "bright female pop vocals, playful delivery, sarcastic tone"
+instrumentation: "synth bass, disco-inspired drums, bright synth pads"
+production: "polished modern pop, wide stereo mix, punchy drums"
+mood: "playful, sarcastic, witty, upbeat"
+
+## Lyrics
+
+[Verse 1 | playful | bright production]
+You showed up late with pizza stains
+While you ranked your Pokémon again
+Living off your mother's Costco runs
+But remembered your Spotify login
+
+## Evaluation Parameters (User-Specified)
+
+**Specificity Standard:** Strict Commercial Standards
+**Contemporary Balance:** Maximum Timeless Appeal
+**Wordiness Tolerance:** Strict Economy (Pop/Electronic)
+**Show/Tell Balance:** Strongly Favor Showing
+
+Please adapt your evaluation criteria according to these user preferences. Consult the appropriate genre-specific reference guide:
+- Pop: references/pop-evaluation-guide.md
+- Indie/Folk: references/indie-folk-evaluation-guide.md
+- Cross-reference: references/genre-evaluation-matrix.md
+
+## Evaluation Request
+
+Rate this material against professional music production standards:
+[standard evaluation request]
+```
+
+**Expected quality-reviewer behavior with these parameters:**
+- Reads `references/pop-evaluation-guide.md`
+- Flags "Pokémon", "Costco", "Spotify" as CRITICAL (brand names in pop)
+- Flags contemporary references (2020s relatable, but it's 2025)
+- Checks wordiness against 6-8 word target for pop
+- Pushes for showing over telling (70/30 ratio)
+
 ## Input Sanitization Rules
 
 **Remove ALL references to:**
@@ -188,5 +275,8 @@ Quality-reviewer can read these files for evaluation standards:
 - `references/meta-tags-reference.md` - Meta tag usage patterns
 - `references/realism-descriptors.md` - Realism vocabulary for acoustic genres
 - `references/genre-clouds.md` - Genre characteristic patterns
+- `references/pop-evaluation-guide.md` - **NEW:** Pop-specific evaluation criteria (brand names, dating, wordiness, show/tell)
+- `references/indie-folk-evaluation-guide.md` - **NEW:** Indie/folk-specific evaluation criteria (authenticity, narrative depth)
+- `references/genre-evaluation-matrix.md` - **NEW:** Cross-genre comparison matrix for quick reference
 
-The quality-reviewer will access these as needed during evaluation.
+The quality-reviewer will access these as needed during evaluation, especially when user-specified parameters are provided.

@@ -187,19 +187,109 @@ OPTIONAL (nice-to-have):
    - Extract mood from prompt
    - Extract vocal style from prompt
 
+2.5. **Ask Genre-Specific Refinement Questions (NEW):**
+
+Use AskUserQuestion tool to collect evaluation preferences from user.
+
+**Question 1: Specificity Preference**
+```
+question: "How should I evaluate specificity for this {genre} song?"
+header: "Specificity"
+multiSelect: false
+options:
+  - label: "Strict Commercial Standards"
+    description: "Avoid ALL brand names, product references, and dated cultural references. Prioritize universal, timeless language suitable for radio/commercial release."
+
+  - label: "Balanced Approach (Recommended)"
+    description: "Flag obvious brand names and dated references, but allow some specific details if they serve the song. Consider genre conventions."
+
+  - label: "Authentic/Artistic Priority"
+    description: "Allow specific brands, places, and cultural references if they enhance authenticity and storytelling. Prioritize artistic vision over commercial considerations."
+```
+
+**Question 2: Contemporary vs. Timeless Balance**
+```
+question: "What's your priority for contemporary relevance vs. timeless appeal?"
+header: "Contemporary"
+multiSelect: false
+options:
+  - label: "Maximum Timeless Appeal"
+    description: "Avoid all dated references. Flag anything that might age (tech products, current slang, 2025-specific culture). Prioritize songs that work in any era."
+
+  - label: "Balanced (Recommended)"
+    description: "Accept some contemporary references if not too specific. Flag obvious dating risks (product names, specific tech). Allow current but not hyper-specific language."
+
+  - label: "Current/Contemporary Focus"
+    description: "Embrace contemporary references for immediate relatability. Accept that song may date. Prioritize connecting with current audience over timelessness."
+```
+
+**Question 3: Wordiness Tolerance**
+```
+question: "How should I evaluate lyrical economy for this {genre} song?"
+header: "Wordiness"
+multiSelect: false
+options:
+  - label: "Strict Economy (Pop/Electronic)"
+    description: "Flag lines over 8 words. Prioritize compressed, punchy language. Every word must earn its place."
+
+  - label: "Moderate (Recommended for most genres)"
+    description: "Flag lines over 10 words as suggestions. Balance economy with expression. Allow some variation."
+
+  - label: "Narrative Freedom (Folk/Country/Indie)"
+    description: "Allow 10-12+ word lines. Prioritize storytelling flow over compression. Wordiness acceptable if it serves narrative."
+```
+
+**Question 4: Show vs. Tell Balance**
+```
+question: "What balance of 'showing' vs. 'telling' should I expect?"
+header: "Show/Tell"
+multiSelect: false
+options:
+  - label: "Strongly Favor Showing"
+    description: "Flag explicit statements. Push for implication over explanation. 80/20 show to tell ratio."
+
+  - label: "Balanced (Recommended)"
+    description: "Accept mix of showing and telling. Flag overly explicit or overly abstract. 60/40 show to tell."
+
+  - label: "Allow Direct Statements"
+    description: "Explicit emotional statements acceptable. Clarity prioritized over implication. 40/60 show to tell."
+```
+
+**Collect user responses and store for parameter construction.**
+
 3. **Sanitize Input:**
    - Remove any mention of "AI-generated", "Claude", "LLM"
    - Frame neutrally: "Evaluate this song material for professional quality"
 
+3.5. **Construct Parameterized Prompt (NEW):**
+
+Append user preferences to the sanitized prompt:
+
+```
+## Evaluation Parameters (User-Specified)
+
+**Specificity Standard:** {user_response_from_question_1}
+**Contemporary Balance:** {user_response_from_question_2}
+**Wordiness Tolerance:** {user_response_from_question_3}
+**Show/Tell Balance:** {user_response_from_question_4}
+
+Please adapt your evaluation criteria according to these user preferences. Consult the appropriate genre-specific reference guide:
+- Pop: references/pop-evaluation-guide.md
+- Indie/Folk: references/indie-folk-evaluation-guide.md
+- Cross-reference: references/genre-evaluation-matrix.md
+```
+
 4. **Launch Sub-Agent:**
    - Use Task tool to invoke quality-reviewer agent
-   - Pass only: prompt text, lyrics text, minimal context (genre/mood/vocals)
+   - Pass: prompt text, lyrics text, minimal context (genre/mood/vocals), **AND evaluation parameters**
    - Sub-agent has independent context (no shared conversation history)
+   - Sub-agent will apply genre-specific criteria based on parameters
 
 5. **Present Results:**
    - Display structured feedback to user
-   - Categorize recommendations by severity
+   - Categorize recommendations by severity (CRITICAL/SUGGESTED/OPTIONAL)
    - Provide specific line numbers and actionable suggestions
+   - Note which evaluation parameters were applied
 
 ### Context Isolation
 
