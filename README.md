@@ -530,6 +530,7 @@ For issues, questions, or suggestions:
 - [Claude Code](https://claude.ai/claude-code) - AI coding assistant
 - [Genius.com](https://genius.com/) - Lyric analysis
 - [HookTheory.com](https://www.hooktheory.com/) - Music theory analysis
+- [LyricSoul](https://lyricsoul.org/) - LLM Lyric Benchmark
 - [N8+GR8](https://suno.com/@nwp) - My Suno profile
 
 ---
